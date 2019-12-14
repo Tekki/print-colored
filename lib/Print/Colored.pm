@@ -238,33 +238,33 @@ Internally they call L<IO::Prompter/prompt>.
 
 =head2 prompt_error
 
-    $input = prompt_error 'There was an error';
+    $input = prompt_error 'Enter your data: ';
 
-Prompts for an input colored as C<error>.
+Prompts colored as C<error> and returns the input.
 
 =head2 prompt_info
 
-    $input = prompt_info 'This is an info';
+    $input = prompt_info 'Enter your data: ';
 
-Prompts for an input colored as C<info>.
+Prompts colored as C<info> and returns the input.
 
 =head2 prompt_input
 
-    $input = prompt_input 'Waiting for an input...';
+    $input = prompt_input 'Enter your data: ';
 
-Prompts for an input colored as C<input>.
+Prompts colored as C<input> and returns the input.
 
 =head2 prompt_ok
 
-    $input = prompt_ok 'Everything okay';
+    $input = prompt_ok 'Enter your data: ';
 
-Prompts for an input colored as C<ok>.
+Prompts colored as C<ok> and returns the input.
 
 =head2 prompt_warn
 
-    $input = prompt_warn 'Last warning';
+    $input = prompt_warn 'Enter your data: ';
 
-Prompts for an input colored as C<warn>.
+Prompts colored as C<warn> and returns the input.
 
 =head1 say_
 
