@@ -1,103 +1,314 @@
-package Tekki::IO::Colored;
-use Mojo::Base 'Exporter';
+package Print::Colored;
+use strict;
+use warnings;
+use utf8;
+use v5.24.0;
 
+use Exporter 'import';
 use IO::Prompter;
-use Term::ANSIColor;
+use Term::ANSIColor qw|colored coloralias|;
 
-use constant {
-  ERROR => ['bold', 'red'],
-  INFO  => ['bold', 'yellow'],
-  INPUT => ['bold', 'cyan'],
-  OK    => ['bold', 'green'],
-  WARN  => ['bold', 'magenta'],
-};
+our $VERSION = '0.0';
 
-our @EXPORT = qw|
-  color_error color_info color_input color_ok color_warn
-  print_error print_info print_input print_ok print_warn
-  prompt_error prompt_info prompt_input prompt_ok prompt_warn
-  say_error say_info say_input say_ok say_warn|;
+our @EXPORT      = ();
+our @EXPORT_OK   = ();
+our %EXPORT_TAGS = ();
 
-# Functions
+coloralias('error', 'bright_red');
+coloralias('info',  'bright_blue');
+coloralias('input', 'bright_cyan');
+coloralias('ok',    'bright_green');
+coloralias('warn',  'bright_magenta');
 
-sub color_error {
-  return colored(ERROR, @_);
-}
+# functions
 
-sub color_info {
-  return colored(INFO, @_);
-}
+{
+  no strict 'refs';    ## no critic
+  for my $context (qw|error info input ok warn|) {
 
-sub color_input {
-  return colored(INPUT, @_);
-}
+    # color
+    my $fn = "color_$context";
+    push $EXPORT_TAGS{color}->@*, $fn;
 
-sub color_ok {
-  return colored(OK, @_);
-}
+    *{__PACKAGE__ . "::$fn"} = sub { return colored [$context], @_ };
 
-sub color_warn {
-  return colored(WARN, @_);
-}
+    # print
+    $fn = "print_$context";
+    push $EXPORT_TAGS{print}->@*, $fn;
 
-sub print_error {
-  print colored(ERROR, @_);
-}
+    *{__PACKAGE__ . "::$fn"} = sub { print colored [$context], @_ };
 
-sub print_info {
-  print colored(INFO, @_);
-}
+    # prompt
+    $fn = "prompt_$context";
+    push $EXPORT_TAGS{prompt}->@*, $fn;
 
-sub print_input {
-  print colored(INPUT, @_);
-}
+    *{__PACKAGE__ . "::$fn"} = sub {
+      return prompt shift, -v, -style => coloralias($context) =~ s/bright_/bold /r, @_;
+    };
 
-sub print_ok {
-  print colored(OK, @_);
-}
+    # say
+    $fn = "say_$context";
+    push $EXPORT_TAGS{say}->@*, $fn;
 
-sub print_warn {
-  print colored(WARN, @_);
-}
+    *{__PACKAGE__ . "::$fn"} = sub { say colored [$context], @_ };
+  }
 
-sub prompt_error {
-  return prompt shift, -v, -style => ERROR, @_;
-}
-
-sub prompt_info {
-  return prompt shift, -v, -style => INFO, @_;
-}
-
-sub prompt_input {
-  return prompt shift, -v, -style => INPUT, @_;
-}
-
-sub prompt_ok {
-  return prompt shift, -v, -style => OK, @_;
-}
-
-sub prompt_warn {
-  return prompt shift, -v, -style => WARN, @_;
-}
-
-sub say_error {
-  say colored(ERROR, @_);
-}
-
-sub say_info {
-  say colored(INFO, @_);
-}
-
-sub say_input {
-  say colored(INPUT, @_);
-}
-
-sub say_ok {
-  say colored(OK, @_);
-}
-
-sub say_warn {
-  say colored(WARN, @_);
+  $EXPORT_TAGS{all}->@* = @EXPORT_OK = map { $EXPORT_TAGS{$_}->@* } qw|color print prompt say|;
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+Print::Colored - print, say, prompt with predefined colors
+
+=head1 SYNOPSIS
+
+    use Print::Colored;
+    use Print::Colored ':all';
+
+    # color
+    use Print::Colored ':color';
+
+    $colored_text = color_error $text;    # bright red
+    $colored_text = color_info $text;     # bright blue
+    $colored_text = color_input $text;    # bright cyan
+    $colored_text = color_ok $text;       # bright green
+    $colored_text = color_warn $text;     # bright magenta
+
+    # print
+    use Print::Colored ':print';
+
+    print_error $text;
+    print_info $text;
+    print_input $text;
+    print_ok $text;
+    print_warn $text;
+
+    # prompt
+    use Print::Colored ':prompt';
+
+    $input = prompt_error $text, @params;
+    $input = prompt_info $text, @params;
+    $input = prompt_input $text, @params;
+    $input = prompt_ok $text, @params;
+    $input = prompt_warn $text, @params;
+
+    # say
+    use Print::Colored ':say';
+
+    say_error $text;
+    say_info $text;
+    say_input $text;
+    say_ok $text;
+    say_warn $text;
+
+=head1 DESCRIPTION
+
+L<Print::Colored> provides functions to print, say, prompt with predefined colors.
+
+=over
+
+=item C<error> bright red
+
+=item C<info> bright blue
+
+=item C<input> bright cyan
+
+=item C<ok> bright green
+
+=item C<warn> bright magenta
+
+=back
+
+We should use colors all the time we write sripts that run in the terminal.
+Read L<Use terminal colors to distinguish information|https://www.perl.com/article/use-terminal-colors-to-distinguish-information/>
+by L<brian d foy|https://metacpan.org/author/BDFOY> to get some more ideas about it.
+
+But experience shows that the more commands and constants we have to use the less colors our
+scripts have. This was the reason to build this rather simple module.
+
+=head2 Limitations
+
+Because the colors are predefined, there isn't much to configure. If you don't like them (and quite
+sure you don't) and until we publish a better solution, you can use L<Term::ANSIColor/coloralias> to
+modify them.
+
+    use Term::ANSIColor 'coloralias';
+
+    coloralias('error', 'yellow');          # default: bright_red
+    coloralias('info',  'white');           # default: bright_blue
+    coloralias('input', 'bright_white');    # default: bright_cyan
+    coloralias('ok',    'black');           # default: bright_green
+    coloralias('warn',  'red');             # default: bright_blue
+
+All the commands except L</color_> write directly to C<STDOUT>.
+
+    print_ok $filehandle 'Everything okay.';    # ✗
+    say_ok $filehandle 'Everything okay.';      # ✗
+
+You can't L</print_> and L</say_> to filehandles.
+
+    print $filehandle color_ok 'Everything okay.';    # ✓
+    say $filehandle color_ok 'Everything okay.';      # ✓
+
+Instead you have to use one of the L</color_> functions.
+
+=head1 color_
+
+    use Print::Colored ':color';
+
+Imports the functions L</color_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+
+=head2 color_error
+
+    $colored_text = color_error 'There was an error';
+
+Returns a text colored as C<error>.
+
+=head2 color_info
+
+    $colored_text = color_info 'This is an info';
+
+Returns a text colored as C<info>.
+
+=head2 color_input
+
+    $colored_text = color_input 'Waiting for an input...';
+
+Returns a text colored as C<input>.
+
+=head2 color_ok
+
+    $colored_text = color_ok 'Everything okay';
+
+Returns a text colored as C<ok>.
+
+=head2 color_warn
+
+    $colored_text = color_warn 'Last warning';
+
+Returns a text colored as C<warn>.
+
+=head1 print_
+
+    use Print::Colored ':print';
+
+Imports the functions L</print_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+
+=head2 print_error
+
+    print_error 'There was an error';
+
+Prints a text colored as C<error>.
+
+=head2 print_info
+
+    print_info 'This is an info';
+
+Prints a text colored as C<info>.
+
+=head2 print_input
+
+    print_input 'Waiting for an input...';
+
+Prints a text colored as C<input>.
+
+=head2 print_ok
+
+    print_ok 'Everything okay';
+
+Prints a text colored as C<ok>.
+
+=head2 print_warn
+
+    print_warn 'Last warning';
+
+Prints a text colored as C<warn>.
+
+=head1 prompt_
+
+    use Print::Colored ':prompt';
+
+Imports the functions L</prompt_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+Internally they call L<IO::Prompter/prompt>.
+
+=head2 prompt_error
+
+    $input = prompt_error 'There was an error';
+
+Prompts for an input colored as C<error>.
+
+=head2 prompt_info
+
+    $input = prompt_info 'This is an info';
+
+Prompts for an input colored as C<info>.
+
+=head2 prompt_input
+
+    $input = prompt_input 'Waiting for an input...';
+
+Prompts for an input colored as C<input>.
+
+=head2 prompt_ok
+
+    $input = prompt_ok 'Everything okay';
+
+Prompts for an input colored as C<ok>.
+
+=head2 prompt_warn
+
+    $input = prompt_warn 'Last warning';
+
+Prompts for an input colored as C<warn>.
+
+=head1 say_
+
+    use Print::Colored ':say';
+
+Imports the functions L</say_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+
+=head2 say_error
+
+    say_error 'There was an error';
+
+Prints a text with appended newline colored as C<error>.
+
+=head2 say_info
+
+    say_info 'This is an info';
+
+Prints a text with appended newline colored as C<info>.
+
+=head2 say_input
+
+    say_input 'Waiting for an input...';
+
+Prints a text with appended newline colored as C<input>.
+
+=head2 say_ok
+
+    say_ok 'Everything okay';
+
+Prints a text with appended newline colored as C<ok>.
+
+=head2 say_warn
+
+    say_warn 'Last warning';
+
+Prints a text with appended newline colored as C<warn>.
+
+=head1 AUTHOR & COPYRIGHT
+
+© 2019 by Tekki (Rolf Stöckli).
+
+This program is free software, you can redistribute it and/or modify it under the terms of the Artistic License version 2.0.
+
+=head1 SEE ALSO
+
+L<IO::Prompter>, L<Term::ANSIColor>.
+
+=cut
