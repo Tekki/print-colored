@@ -35,8 +35,7 @@ my %colors = (
 );
 my $off = "${esc}[0m";
 
-# for my $context (qw|error info input ok warn|) {
-for my $context (qw|error info input ok|) {
+for my $context (qw|error info input ok warn|) {
   no strict 'refs';    ## no critic
   my $text = 'abc';
   my $fn;
