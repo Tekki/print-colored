@@ -43,7 +43,8 @@ coloralias('warn',  'bright_magenta');
     push $EXPORT_TAGS{prompt}->@*, $fn;
 
     *{__PACKAGE__ . "::$fn"} = sub {
-      return prompt shift, -v, -style => coloralias($context) =~ s/bright_/bold /r, @_;
+      my $style = coloralias($context) =~ s/bright_/bold /r;
+      return prompt shift, -v, -style => $style, -echostyle => $style, @_;
     };
 
     # say
@@ -133,8 +134,8 @@ scripts have. This was the reason to build this rather simple module.
 =head2 Limitations
 
 Because the colors are predefined, there isn't much to configure. If you don't like them (and quite
-sure you don't) and until we publish a better solution, you can use L<Term::ANSIColor/coloralias> to
-modify them.
+sure you don't) and until we come up with a better solution, you can use L<Term::ANSIColor/coloralias>
+to modify them.
 
     use Term::ANSIColor 'coloralias';
 
@@ -146,8 +147,8 @@ modify them.
 
 All the commands except L</color_> write directly to C<STDOUT>.
 
-    print_ok $filehandle 'Everything okay.';    # ✗
-    say_ok $filehandle 'Everything okay.';      # ✗
+    print_ok $filehandle 'Everything okay.';    # ✗ no
+    say_ok $filehandle 'Everything okay.';      # ✗ no
 
 You can't L</print_> and L</say_> to filehandles.
 
@@ -196,7 +197,7 @@ Returns a text colored as C<warn>.
 
     use Print::Colored ':print';
 
-Imports the functions L</print_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+Imports the functions L</print_error>, L</print_info>, L</print_input>, L</print_ok>, and L</print_warn>.
 
 =head2 print_error
 
@@ -232,7 +233,7 @@ Prints a text colored as C<warn>.
 
     use Print::Colored ':prompt';
 
-Imports the functions L</prompt_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+Imports the functions L</prompt_error>, L</prompt_info>, L</prompt_input>, L</prompt_ok>, and L</prompt_warn>.
 Internally they call L<IO::Prompter/prompt>.
 
 =head2 prompt_error
@@ -269,7 +270,7 @@ Prompts for an input colored as C<warn>.
 
     use Print::Colored ':say';
 
-Imports the functions L</say_error>, L</color_info>, L</color_input>, L</color_ok>, and L</color_warn>.
+Imports the functions L</say_error>, L</say_info>, L</say_input>, L</say_ok>, and L</say_warn>.
 
 =head2 say_error
 
