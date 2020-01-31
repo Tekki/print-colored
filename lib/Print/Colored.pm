@@ -47,8 +47,8 @@ coloralias('warn',  'bright_magenta');
       return prompt shift, -v, -echostyle => $style, -style => $style, @_;
     };
 
-    # pwdprompt
-    $fn = "pwdprompt_$context";
+    # password
+    $fn = "password_$context";
     push $EXPORT_TAGS{prompt}->@*, $fn;
 
     *{__PACKAGE__ . "::$fn"} = sub {
@@ -106,11 +106,11 @@ Print::Colored - print, say, prompt with predefined colors
     $input = prompt_ok $text, @params;
     $input = prompt_warn $text, @params;
 
-    $password = pwdprompt_error $text, @params;
-    $password = pwdprompt_info $text, @params;
-    $password = pwdprompt_input $text, @params;
-    $password = pwdprompt_ok $text, @params;
-    $password = pwdprompt_warn $text, @params;
+    $password = password_error $text, @params;
+    $password = password_info $text, @params;
+    $password = password_input $text, @params;
+    $password = password_ok $text, @params;
+    $password = password_warn $text, @params;
 
     # say
     use Print::Colored ':say';
@@ -249,13 +249,13 @@ Prints a text colored as C<warn>.
     use Print::Colored ':prompt';
 
 Imports the functions L</prompt_error>, L</prompt_info>, L</prompt_input>, L</prompt_ok>, L</prompt_warn>,
-L</pwdprompt_error>, L</pwdprompt_info>, L</pwdprompt_input>, L</pwdprompt_ok>, and L</pwdprompt_warn>.
+L</password_error>, L</password_info>, L</password_input>, L</password_ok>, and L</password_warn>.
 Internally they call L<IO::Prompter/prompt>.
 
     $password = prompt_input 'Enter your password: ', -echo => '*';
-    $password = pwdprompt_input 'Enter your password: ';
+    $password = password_input 'Enter your password: ';
 
-C<pwdprompt> functions ask for a password and are identical to C<prompt> with parameter C<<-echo => '*'>>.
+C<password> functions ask for a password and are identical to C<prompt> with parameter C<<-echo => '*'>>.
 
 =head2 prompt_error
 
@@ -287,33 +287,33 @@ Prompts colored as C<ok> and returns the input.
 
 Prompts colored as C<warn> and returns the input.
 
-=head2 pwdprompt_error
+=head2 password_error
 
-    $password = pwdprompt_error 'Enter your password: ';
+    $password = password_error 'Enter your password: ';
 
 Prompts colored as C<error> for a password and returns the input.
 
-=head2 pwdprompt_info
+=head2 password_info
 
-    $password = pwdprompt_info 'Enter your password: ';
+    $password = password_info 'Enter your password: ';
 
 Prompts colored as C<info> for a password and returns the input.
 
-=head2 pwdprompt_input
+=head2 password_input
 
-    $password = pwdprompt_input 'Enter your password: ';
+    $password = password_input 'Enter your password: ';
 
 Prompts colored as C<input> for a password and returns the input.
 
-=head2 pwdprompt_ok
+=head2 password_ok
 
-    $password = pwdprompt_ok 'Enter your password: ';
+    $password = password_ok 'Enter your password: ';
 
 Prompts colored as C<ok> for a password and returns the input.
 
-=head2 pwdprompt_warn
+=head2 password_warn
 
-    $password = pwdprompt_warn 'Enter your password: ';
+    $password = password_warn 'Enter your password: ';
 
 Prompts colored as C<warn> for a password and returns the input.
 
@@ -355,7 +355,7 @@ Prints a text with appended newline colored as C<warn>.
 
 =head1 AUTHOR & COPYRIGHT
 
-© 2019 by Tekki (Rolf Stöckli).
+© 2019-2020 by Tekki (Rolf Stöckli).
 
 This program is free software, you can redistribute it and/or modify it under the terms of the Artistic License version 2.0.
 

@@ -50,8 +50,8 @@ for my $context (qw|error info input ok warn|) {
   ok $input = &$fn($text), "prompt_$context";
   is $input, "input $context", "input for $context";
 
-  $fn = "${package}::pwdprompt_$context";
-  ok $input = &$fn($text), "pwdprompt_$context";
+  $fn = "${package}::password_$context";
+  ok $input = &$fn($text), "password_$context";
   is $input, "password $context", "password for $context";
 }
 
