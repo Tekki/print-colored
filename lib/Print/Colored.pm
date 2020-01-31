@@ -8,7 +8,7 @@ use Exporter 'import';
 use IO::Prompter;
 use Term::ANSIColor qw|colored coloralias|;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our @EXPORT      = ();
 our @EXPORT_OK   = ();

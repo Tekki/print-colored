@@ -34,6 +34,12 @@ Print::Colored - print, say, prompt with predefined colors
     $input = prompt_ok $text, @params;
     $input = prompt_warn $text, @params;
 
+    $password = password_error $text, @params;
+    $password = password_info $text, @params;
+    $password = password_input $text, @params;
+    $password = password_ok $text, @params;
+    $password = password_warn $text, @params;
+
     # say
     use Print::Colored ':say';
 
@@ -79,14 +85,14 @@ All the commands except ["color\_"](#color_) write directly to `STDOUT`.
     print_ok $filehandle 'Everything okay.';    # ✗ no
     say_ok $filehandle 'Everything okay.';      # ✗ no
 
-You can't ["print\_"](#print_) and ["say\_"](#say_) to filehandles.
+You can't ["print"](#print) and ["say"](#say) to filehandles.
 
     print $filehandle color_ok 'Everything okay.';    # ✓
     say $filehandle color_ok 'Everything okay.';      # ✓
 
-Instead you have to use one of the ["color\_"](#color_) functions.
+Instead you have to use one of the ["color"](#color) functions.
 
-# color\_
+# color
 
     use Print::Colored ':color';
 
@@ -122,7 +128,7 @@ Returns a text colored as `ok`.
 
 Returns a text colored as `warn`.
 
-# print\_
+# print
 
     use Print::Colored ':print';
 
@@ -158,12 +164,18 @@ Prints a text colored as `ok`.
 
 Prints a text colored as `warn`.
 
-# prompt\_
+# prompt
 
     use Print::Colored ':prompt';
 
-Imports the functions ["prompt\_error"](#prompt_error), ["prompt\_info"](#prompt_info), ["prompt\_input"](#prompt_input), ["prompt\_ok"](#prompt_ok), and ["prompt\_warn"](#prompt_warn).
+Imports the functions ["prompt\_error"](#prompt_error), ["prompt\_info"](#prompt_info), ["prompt\_input"](#prompt_input), ["prompt\_ok"](#prompt_ok), ["prompt\_warn"](#prompt_warn),
+["password\_error"](#password_error), ["password\_info"](#password_info), ["password\_input"](#password_input), ["password\_ok"](#password_ok), and ["password\_warn"](#password_warn).
 Internally they call ["prompt" in IO::Prompter](https://metacpan.org/pod/IO%3A%3APrompter#prompt).
+
+    $password = prompt_input 'Enter your password: ', -echo => '*';
+    $password = password_input 'Enter your password: ';
+
+`password` functions ask for a password and are identical to `prompt` with parameter `<-echo =` '\*'>>.
 
 ## prompt\_error
 
@@ -195,7 +207,37 @@ Prompts colored as `ok` and returns the input.
 
 Prompts colored as `warn` and returns the input.
 
-# say\_
+## password\_error
+
+    $password = password_error 'Enter your password: ';
+
+Prompts colored as `error` for a password and returns the input.
+
+## password\_info
+
+    $password = password_info 'Enter your password: ';
+
+Prompts colored as `info` for a password and returns the input.
+
+## password\_input
+
+    $password = password_input 'Enter your password: ';
+
+Prompts colored as `input` for a password and returns the input.
+
+## password\_ok
+
+    $password = password_ok 'Enter your password: ';
+
+Prompts colored as `ok` for a password and returns the input.
+
+## password\_warn
+
+    $password = password_warn 'Enter your password: ';
+
+Prompts colored as `warn` for a password and returns the input.
+
+# say
 
     use Print::Colored ':say';
 
@@ -233,7 +275,7 @@ Prints a text with appended newline colored as `warn`.
 
 # AUTHOR & COPYRIGHT
 
-© 2019 by Tekki (Rolf Stöckli).
+© 2019-2020 by Tekki (Rolf Stöckli).
 
 This program is free software, you can redistribute it and/or modify it under the terms of the Artistic License version 2.0.
 
