@@ -275,7 +275,7 @@ Prints a text with appended newline colored as `warn`.
 
 # AUTHOR & COPYRIGHT
 
-© 2019-2020 by Tekki (Rolf Stöckli).
+© 2019-2022 by Tekki (Rolf Stöckli).
 
 This program is free software, you can redistribute it and/or modify it under the terms of the Artistic License version 2.0.
 
